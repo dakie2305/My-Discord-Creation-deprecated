@@ -52,7 +52,7 @@ async def on_message(message):
         #Nếu là nói chuyện với user id 315835396305059840 thì phải đổi cách như sau:
         if message.author.id == user_darkie['user_id']:
             roleplay_ele = "Hãy đóng vai như sau: ngươi tên là Creation 1, và ngươi đang nói chuyện với bề trên Đấng Tạo Hoá Darkie. Hãy thật kính trọng. "
-        response = model.generate_content(f"{roleplay_ele} Sau đó, hãy trả lời nội dung sau với tính cách trên: {formated_string_2}")
+        response = model.generate_content(f"{roleplay_ele} Sau đó, hãy trả lời nội dung sau với tính cách trên: {formated_string}")
         # response = google_bard.generate_text(f"Hãy vờ như là một người bạn thân nhưng tính tình cáu kỉnh, hơi cục súc và trả lời: {message.content}", api_key=API_KEY)
         await message.channel.send(f"{message.author.mention} {response.text}")
         print("Someone directly call Creation 1")
