@@ -1,0 +1,6 @@
+Bộ thích chửi thề lắm à {message.author.mention}?
+Có thân nhau không mà thích nói chuyện kiểu đó {message.author.mention}?
+Đây không tiếp loại người thích chửi thề nha {message.author.mention}?
+Mình là người văn minh, không nói chuyện với kẻ văng tục nói mồm nha {message.author.mention}.
+Server văn minh bạn ơi, coi chừng cái miệng đấy nha {message.author.mention}.
+Xin đấy, coi chừng cái miệng đấy nha {message.author.mention}.
