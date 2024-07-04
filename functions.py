@@ -46,11 +46,36 @@ user_darkie = DefaultUserList.user_data_list[0]
 user_cr_1 = DefaultUserList.user_data_list[1]
 user_cr_2 = DefaultUserList.user_data_list[2]
 
-def get_proper_prompt(message, bot_name):
-
+async def check_message_nsfw(message, client):
+    #Kiểm tra message swear words
+    check_swear_words = await check_swear_content(message.content.lower())
+    if check_swear_words:
+        response = get_random_response("OnSwearWords.txt")
+        formatted_response = response.replace("{message.author.mention}", message.author.mention)
+        print(f"Username {message.author.name}, Display user name {message.author.display_name}, just use swear word at {client.user}")
+        return True, formatted_response
+        
+    #Kiểm tra message nsfw
+    check_nsfw_words = await check_nswf_content(message.content.lower())
+    if check_nsfw_words:
+        response = get_random_response("OnHornyWords.txt")
+        formatted_response = response.replace("{message.author.mention}", message.author.mention)
+        print(f'{message.author.mention} just use nsfw at {client.user}')
+        return True, formatted_response
+            
+    roles_of_user = message.author.roles
+    for role in roles_of_user:
+        if role.name == "Đáy Xã Hội":
+            #Role bị khinh bỉ
+            response = get_random_response("OnDespitedRole.txt")
+            formatted_response = response.replace("{message.author.mention}", message.author.mention)
+            print(f"{client.user} just despited Username {message.author.name}, Display user name {message.author.display_name}")
+            return True, formatted_response
+    return False, None
     
+def get_proper_prompt(message, bot_name):
     # formated_string = message.content.replace(f"{bot_name}", "", 1)
-    initial_instruction = "You are about to enter a role-play scenarior, please keep in character, and please avoid using third-person descriptions of my character's actions or emotions. Let me describe those myself. \n"
+    initial_instruction = "You are about to enter a role-play scenarior, please keep in character, do not break out of character unless I specifically say so, focus on the conversation itself without descriptions or third-person POV, and please avoid using third-person descriptions of my character's actions or emotions. Let me describe those myself. \n"
     roleplay_ele = f"{initial_instruction}"
     background = ""
     if bot_name.lower() == "creation 1":
@@ -74,11 +99,10 @@ def get_proper_prompt(message, bot_name):
         print(f"{bot_name} just init conversation with {user_cr_1['user_name']}")
     #Đối phương là người bình thường
     else:
-        roleplay_ele = f"{initial_instruction} {background} **Đối phương là bạn bình thường của ngươi, ngươi đang nói chuyện với một người bạn của mình.**\n"
+        roleplay_ele = f"{initial_instruction} {background} **Một người vừa đến gặp ngươi, đối phương tên là {message.author.display_name} và là bạn thân chí cốt của ngươi.**\n"
         
     final_prompt = f"{roleplay_ele} **Hãy trả lời nội dung sau với tính cách trên. Nội dung mà đối phương vừa nói: {message.content}**"
     return final_prompt
-            
              
 
 safety_settings = [

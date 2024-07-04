@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 import functions
 import db.UserList as DefaultUserList
 import google.generativeai as genai
-
+import time
 
 load_dotenv()
 intents = discord.Intents.default()
@@ -47,46 +47,18 @@ async def on_message(message):
             print(f'{message.author.mention} mentioned me')
             
     if functions.contains_substring(message.content.lower(), bots_creation1_name):
-        while(stop_flag != True):
-            #Kiểm tra message swear words
-            check_swear_words = await functions.check_swear_content(message.content.lower())
-            if check_swear_words:
-                response = functions.get_random_response("OnSwearWords.txt")
-                formatted_response = response.replace("{message.author.mention}", message.author.mention)
-                await message.channel.send(formatted_response)
-                print(f"Username {message.author.name}, Display user name {message.author.display_name}, just use swear word at {client.user}")
-                stop_flag = True
-                break
-            
-            #Kiểm tra message nsfw
-            check_nsfw_words = await functions.check_nswf_content(message.content.lower())
-            if check_nsfw_words:
-                response = functions.get_random_response("OnHornyWords.txt")
-                formatted_response = response.replace("{message.author.mention}", message.author.mention)
-                await message.channel.send(formatted_response)
-                print(f'{message.author.mention} just use nsfw at {client.user}')
-                stop_flag = True
-                break
-            
-            roles_of_user = message.author.roles
-            for role in roles_of_user:
-                if role.name == "Đáy Xã Hội":
-                    #Role bị khinh bỉ
-                    response = functions.get_random_response("OnDespitedRole.txt")
-                    formatted_response = response.replace("{message.author.mention}", message.author.mention)
-                    await message.channel.send(formatted_response)
-                    print(f"{client.user} just despited Username {message.author.name}, Display user name {message.author.display_name}")
-                    stop_flag = True
-                    break
-            break
-        if stop_flag == False:
+        flag, mess = await functions.check_message_nsfw(message, client)
+        if flag != 0:
+            await message.channel.send(mess)
+        else:
+            time.sleep(4)
             model = genai.GenerativeModel('gemini-1.5-flash', functions.safety_settings)
             prompt = functions.get_proper_prompt(message,"Creation 1")
             print(f"Prompt generated from {client.user}: {prompt}")
             response = model.generate_content(f"{prompt}")
             await message.channel.send(f"{message.author.mention} {response.text}")
             print(f"Username {message.author.name}, Display user name {message.author.display_name} directly call {client.user}")
-    
+            time.sleep(4)
 
 bot_token = os.getenv("BOT_TOKENN")
 client.run(bot_token)
